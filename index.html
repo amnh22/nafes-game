@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رحلة بطلات نافس</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f1ff;color:#302447;
+font-family:Tahoma,Arial,sans-serif;line-height:1.9}
+main{max-width:850px;margin:30px auto;padding:20px}
+.card{background:white;border-radius:28px;padding:30px;
+box-shadow:0 12px 40px #52358114;text-align:center}
+h1{color:#7045ad;margin:10px 0;font-size:32px}
+h2{font-size:25px}
+p{color:#685d78}
+.badge{background:#eee7fa;padding:7px 20px;border-radius:30px;
+display:inline-block;color:#7045ad}
+input{width:100%;max-width:430px;padding:16px;border:2px solid #dfd3f0;
+border-radius:15px;font:inherit;text-align:center;margin:15px 0}
+button{font:inherit;cursor:pointer;border:0;border-radius:16px;
+padding:14px 22px;background:#754bb0;color:white;margin:7px}
+button:disabled{cursor:default}
+button:hover:not(:disabled){filter:brightness(.95)}
+.sections{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:25px 0}
+.subject{padding:30px 15px;font-size:26px;font-weight:bold;
+border:2px solid #dfd3f0;background:#f3edff;color:#654097}
+.subject.math{background:#e5f6fc;border-color:#bde4f2;color:#22738d}
+.icon{font-size:50px;display:block}
+.small{font-size:14px}
+.hidden{display:none!important}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.track{height:14px;background:#eee7f6;border-radius:20px;
+overflow:hidden;margin:20px 0}
+.fill{height:100%;background:linear-gradient(90deg,#8ccfd8,#a67bdb);
+transition:width .3s}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option{background:#faf8ff;border:2px solid #dfd3f0;color:#382a50;
+font-size:21px;margin:0;min-height:75px}
+.option.correct{background:#dbf6e6;border-color:#3d9d68;color:#195937}
+.option.wrong{background:#fde8ec;border-color:#d57787;color:#92374b}
+#feedback{min-height:65px;font-weight:bold;margin-top:18px}
+.secondary{background:#eee7f7;color:#654097}
+footer{text-align:center;margin:24px;font-size:14px;color:#756c81}
+#certificate{border:6px double #b69bd8;border-radius:12px;
+background:#fffcff;padding:30px;margin:20px 0}
+#certificate h2{color:#7449aa;font-size:34px}
+#certName{font-size:30px;font-weight:bold;color:#315e77;
+overflow-wrap:anywhere}
+#summary{font-size:28px;color:#7145aa;font-weight:bold}
+.error{color:#a53554;min-height:25px}
+@media(max-width:560px){
+main{margin:12px auto;padding:12px}
+.card{padding:20px 15px}
+h1{font-size:27px}
+.sections,.options{grid-template-columns:1fr}
+.subject{padding:20px}
+}
+</style>
+</head>
+<body>
+<main>
+<section id="home" class="card">
+<div class="badge">✨ نتعلّم • نتحدّى • ننجح ✨</div>
+<div class="icon">🏰</div>
+<h1>رحلة بطلات نافس</h1>
+<p>رحلتان ممتعتان في عالم الأعداد والكلمات</p>
+<label for="student">اكتبي اسمك يا بطلة</label><br>
+<input id="student" maxlength="60" autocomplete="off"
+placeholder="اسم الطالبة">
+<div id="error" class="error" role="alert"></div>
+<p>اختاري رحلتك، واجمعي النجوم ⭐</p>
+<div class="sections">
+<button class="subject math" onclick="start('math')">
+<span class="icon">🔢</span>الرياضيات
+<span class="small" style="display:block">رحلة الأعداد والتفكير</span>
+</button>
+<button class="subject" onclick="start('arabic')">
+<span class="icon">📖</span>لغتي
+<span class="small" style="display:block">رحلة الكلمات والمعاني</span>
+</button>
+</div>
+<p class="small">لكل إجابة صحيحة نجمة، وفي نهاية كل رحلة شهادة باسمك.</p>
+</section>
+
+<section id="game" class="card hidden">
+<div class="top">
+<span id="subjectTitle" class="badge"></span>
+<span id="counter"></span>
+<span id="stars"></span>
+</div>
+<div class="track"><div id="progress" class="fill"></div></div>
+<h2 id="question"></h2>
+<div id="options" class="options"></div>
+<div id="feedback" role="status" aria-live="polite"></div>
+<button id="next" class="hidden" onclick="nextQuestion()">التالي ←</button>
+<br>
+<button class="secondary" onclick="leave()">العودة للرئيسية</button>
+</section>
+
+<section id="result" class="card hidden">
+<div class="icon">🏆</div>
+<h1>أكملتِ الرحلة يا بطلة!</h1>
+<div id="summary"></div>
+<p id="encouragement"></p>
+<div id="certificate">
+<div style="font-size:40px">🌟 🎓 🌟</div>
+<h2>شهادة إنجاز</h2>
+<p>تُمنح للطالبة المتميزة</p>
+<div id="certName"></div>
+<p id="certText"></p>
+<strong id="certScore"></strong>
+<p>نعتز بمحاولاتك، ونفخر بإصرارك على التعلّم</p>
+<div id="certDate" class="small"></div>
+</div>
+<button onclick="downloadCertificate()">📥 حفظ الشهادة كصورة</button>
+<button class="secondary" onclick="start(subject)">🔄 أعيدي الرحلة</button>
+<button class="secondary" onclick="show('home')">🏠 اختاري القسم الآخر</button>
+</section>
+<footer>رحلة بطلات نافس | كل محاولة خطوة نحو التميّز 🌷</footer>
+</main>
+
+<script>
+const bank={
+math:[
+{
+q:"ما أكبر عدد يمكن تكوينه من الأرقام: ٣، ٥، ١، ٤؟",
+o:["٤٥١٣","٤٥٣١","٥٤١٣","٥٤٣١"],a:3,
+e:"نرتّب الأرقام من الأكبر إلى الأصغر: ٥ ثم ٤ ثم ٣ ثم ١."
+},
+{
+q:"مع هند ١٣٧٩ ريالًا. قالت: معي تقريبًا ١٤٠٠ ريال. إلى أي منزلة قرّبت المبلغ؟",
+o:["الآحاد","العشرات","المئات","الألوف"],a:2,
+e:"تقريب ١٣٧٩ إلى أقرب مئة يساوي ١٤٠٠."
+},
+{
+q:"ما العدد الذي يجعل الجملة صحيحة؟\n(٥ + □) + ٤ = ٥ + (٢ + ٤)",
+o:["٢","٤","٧","١١"],a:0,
+e:"العدد الناقص هو ٢؛ تغيّر التجميع وبقيت الأعداد نفسها."
+},
+{
+q:"مع سعاد ٤٠ ريالًا، ولديها ٨ أخوات. أعطت كل واحدة منهن ٤ ريالات. كم ريالًا بقي معها؟",
+o:["٧","٨","١١","١٢"],a:1,
+e:"٨ × ٤ = ٣٢ ريالًا، ثم ٤٠ − ٣٢ = ٨ ريالات."
+},
+{
+q:"كتب سامي ٢٥ كلمة الأسبوع الماضي، و٢٣ كلمة هذا الأسبوع. أخطأ في كتابة ١١ كلمة من المجموع. كم كلمة صحيحة كتب؟",
+o:["٤٨","٣٧","١٤","١٣"],a:1,
+e:"٢٥ + ٢٣ = ٤٨، ثم ٤٨ − ١١ = ٣٧ كلمة صحيحة."
+},
+{
+q:"أيّ المجسّمات ليس له حرف ولا رأس ولا وجه مستوٍ؟",
+o:["الكرة","الأسطوانة","المكعب","المخروط"],a:0,
+e:"الكرة سطحها منحني، وليس لها أحرف أو رؤوس أو أوجه مستوية."
+}
+],
+arabic:[
+{
+q:"اختاري ما يكمل الجملة: …… الطلاب في الاختبار إلا ……",
+o:["أخفق – الضعفاء","تفوق – الأقوياء","نجح – المقصرين","رسب – المعلمين"],
+a:2,e:"الجملة المكتملة: نجح الطلاب في الاختبار إلا المقصرين."
+},
+{
+q:"أي الكلمات مختلفة عن البقية؟",
+o:["سيارة","قارب","قطار","حافلة"],a:1,
+e:"القارب وسيلة نقل مائية، والبقية وسائل نقل برية."
+},
+{
+q:"اختاري العلاقة المشابهة: صداع : رأس",
+o:["يد : قدم","زكام : مرض","مغص : بطن","أسنان : تسوس"],
+a:2,e:"الصداع ألم في الرأس، والمغص ألم في البطن."
+},
+{
+q:"كتب …… وصفة ……",
+o:["الصيدلي – الطعام","الطبيب – الدواء","الممثل – الدواء","المدير – الغذاء"],
+a:1,e:"الجملة الصحيحة: كتب الطبيب وصفة الدواء."
+},
+{
+q:"ما معنى كلمة «الوعرة»؟",
+o:["الصعبة","السهلة","الطويلة","القصيرة"],a:0,
+e:"الوعرة تعني الصعبة، مثل الطريق الوعرة."
+},
+{
+q:"أي الكلمات مختلفة عن البقية؟",
+o:["لبن","عصير","ماء","أرز"],a:3,
+e:"الأرز طعام، أما اللبن والعصير والماء فمشروبات."
+}
+]
+};
+
+let subject="",questions=[],index=0,score=0,answered=false,studentName="";
+const el=id=>document.getElementById(id);
+const ar=n=>Number(n).toLocaleString("ar-SA");
+const title=()=>subject==="math"?"الرياضيات":"لغتي";
+
+function show(id){
+["home","game","result"].forEach(x=>el(x).classList.toggle("hidden",x!==id));
+window.scrollTo({top:0,behavior:"smooth"});
+}
+function start(s){
+const name=el("student").value.trim();
+if(!name){el("error").textContent="اكتبي اسمك أولًا لتظهر الشهادة باسمك 🌷";
+show("home");el("student").focus();return;}
+el("error").textContent="";
+studentName=name;subject=s;
+questions=bank[s].map(x=>({...x}));index=0;score=0;
+show("game");render();
+}
+function render(){
+answered=false;
+const q=questions[index];
+el("subjectTitle").textContent=title();
+el("counter").textContent="السؤال "+ar(index+1)+" من "+ar(questions.length);
+el("stars").textContent="⭐ "+ar(score);
+el("progress").style.width=(index/questions.length*100)+"%";
+el("question").textContent=q.q;
+el("question").style.whiteSpace="pre-line";
+el("feedback").textContent="";
+el("next").classList.add("hidden");
+el("options").replaceChildren();
+q.o.forEach((text,i)=>{
+const b=document.createElement("button");
+b.className="option";b.textContent=text;
+b.onclick=()=>answer(i);
+el("options").appendChild(b);
+});
+}
+function answer(choice){
+if(answered)return;
+answered=true;
+const q=questions[index];
+const buttons=[...el("options").children];
+buttons.forEach((b,i)=>{
+b.disabled=true;
+if(i===q.a)b.classList.add("correct");
+});
+if(choice===q.a){
+score++;
+el("feedback").textContent="أحسنتِ! نجمة جديدة ⭐ "+q.e;
+}else{
+buttons[choice].classList.add("wrong");
+el("feedback").textContent="نتعلّم من المحاولة 🌷 "+q.e;
+}
+el("stars").textContent="⭐ "+ar(score);
+el("next").textContent=index===questions.length-1?"شاهدي نتيجتك وشهادتك 🏆":"التالي ←";
+el("next").classList.remove("hidden");
+}
+function nextQuestion(){
+if(!answered)return;
+index++;
+if(index<questions.length){render();return;}
+finish();
+}
+function finish(){
+el("progress").style.width="100%";
+el("summary").textContent=ar(score)+" من "+ar(questions.length)+" ⭐";
+el("encouragement").textContent=score===questions.length?
+"إجابات رائعة! حصلتِ على جميع النجوم!":
+"أحسنتِ إكمال الرحلة! يمكنك إعادة المحاولة وجمع نجوم أكثر.";
+el("certName").textContent=studentName;
+el("certText").textContent="لإكمالها رحلة "+title()+" في مسابقة رحلة بطلات نافس";
+el("certScore").textContent="النتيجة: "+ar(score)+" من "+ar(questions.length);
+el("certDate").textContent=new Date().toLocaleDateString("ar-SA");
+show("result");
+}
+function leave(){
+if(confirm("هل تريدين العودة للرئيسية؟ ستبدأ هذه المحاولة من جديد."))show("home");
+}
+function downloadCertificate(){
+const c=document.createElement("canvas");
+c.width=1600;c.height=1120;
+const ctx=c.getContext("2d");
+ctx.fillStyle="#fffcff";ctx.fillRect(0,0,c.width,c.height);
+ctx.strokeStyle="#9166bd";ctx.lineWidth=8;
+ctx.strokeRect(35,35,1530,1050);
+ctx.lineWidth=2;ctx.strokeRect(55,55,1490,1010);
+ctx.textAlign="center";ctx.direction="rtl";
+function text(t,y,size,color){
+ctx.font="bold "+size+"px Tahoma, Arial";
+ctx.fillStyle=color||"#49345f";
+ctx.fillText(t,800,y,1380);
+}
+text("رحلة بطلات نافس",160,42,"#754bb0");
+text("شهادة إنجاز",295,82,"#754bb0");
+text("تُمنح للطالبة المتميزة",390,38);
+text(studentName,505,65,"#28677d");
+text("لإكمالها رحلة "+title(),610,43);
+text("النتيجة: "+ar(score)+" من "+ar(questions.length),710,47,"#754bb0");
+text("نعتز بمحاولاتك، ونفخر بإصرارك على التعلّم",825,33);
+text(new Date().toLocaleDateString("ar-SA"),960,29);
+c.toBlob(blob=>{
+if(!blob)return;
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
+a.href=url;a.download="شهادة-رحلة-نافس.png";
+document.body.appendChild(a);a.click();a.remove();
+setTimeout(()=>URL.revokeObjectURL(url),15000);
+},"image/png");
+}
+</script>
+</body>
+</html>
